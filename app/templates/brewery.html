@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{%block title%}Brewery{%endblock%}
+
+{%block main_content%}
+
+    <h1>Beer</h1>
+    <div class="row">
+        <div class="span12">
+
+            <form action="/savebrewery/" method="post" name="BreweryForm" enctype=multipart/form-data>
+                {{ wtf.form_errors(form,"only") }}
+                {{ form.hidden_tag() }}
+                {{ wtf.horizontal_field(form.brewery_name) }}<br>
+                <div style="" id="left_col">
+	                {{ wtf.horizontal_field(form.brewery_url) }}
+	            </div>
+	            <div style="" id="right_col">
+	                {{ wtf.horizontal_field(form.brewery_information) }}
+                </div>
+                <div class="form-actions" id="footer">
+                    <button name-"action-save" type="submit" class="btn btn-primary" value="save">Save Beer</button>
+<!--                     <button name-"action-delete" type="submit" class="btn btn-primary" value="delete" onclick="onDelete()" id="delete_btn">Delete Beer</button> -->
+                </div>
+            </form>
+<!--             <button class="btn btn-primary" value="delete" onclick="onDelete()">Delete Beer</button> -->
+
+        </div>
+        <script type="text/javascript">
+            window.onload = function(){
+            	console.log("on brewery.html load");
+            	if( document.getElementById("brewery_id").value == "" || document.getElementById("brewery_id").value.length < 0){
+            	    document.getElementById("delete_btn").style.visibility="hidden";
+            	}
+            }
+            function onDelete(){
+            	console.log("onDelete brewery :: " + document.forms[0].brewery_id.value);
+            	if( document.forms[0].brewery_id != null){
+ 	            	document.forms[0].action = "/deletebrewery/" + document.forms[0].brewery_id.value;
+ 	            	document.forms[0].submit();
+            	}
+            }
+        </script>
+    </div>
+
+{%endblock%}

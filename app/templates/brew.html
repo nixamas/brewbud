@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+{% import "field_macros.html" as fm %}
+
+{%block title%}Brew{%endblock%}
+
+{%block main_content%}
+
+    <h1>Brew</h1>
+    <div class="row">
+        <div class="span12">
+
+            <form action="/savebrew/" method="post" name="BrewForm" enctype=multipart/form-data>
+                {{ wtf.form_errors(brewform,"only") }}
+                {{ wtf.form_errors(beerform,"only") }}
+                {{ brewform.hidden_tag() }}
+                {{ beerform.hidden_tag() }}
+                {{ wtf.horizontal_field(beerform.beer_name) }}<br>
+                <div id="wrap">
+	                <div style="float:left;width50%;" id="left_col">
+	                    <label class="control-label" for="beer_abv">brewery</label>
+                        <select name="beer-beer_brewery">
+	                        <option value="{{ beerform.beer_brewery.data }}" selected="selected">{{ beerform.beer_brewery.data }}</option>
+	                        {% for brewery in breweries %}
+	                        <option value={{brewery.brewery_name}}>{{brewery.brewery_name}}</option>
+	                        {% endfor %}
+	                    </select>
+		                {{ fm.my_style_field(beerform.beer_style, beer_styles, "beer-beer_style") }}
+<!-- 		                {{ wtf.horizontal_field(beerform.beer_abv) }} -->
+                        {{ wtf.horizontal_field(brewform.brew_abv) }}
+		                {{ wtf.horizontal_field(beerform.beer_ibu) }}
+		                {{ wtf.horizontal_field(beerform.beer_srm) }}
+		                {{ wtf.horizontal_field(beerform.beer_og) }}
+	                </div>
+	                <div style="float:right;width50%;" id="right_col">
+                        {{ fm.my_date_field(brewform.brew_brew_date) }}
+		                {{ fm.my_date_field(brewform.brew_second_ferm_date) }}
+		                {{ fm.my_date_field(brewform.brew_bottle_date) }}
+		                {{ wtf.horizontal_field(brewform.brew_volume) }}
+		                {{ wtf.horizontal_field(brewform.brew_ingredients) }}
+		                {{ wtf.horizontal_field(brewform.brew_notes) }}
+		                {{ wtf.horizontal_field(beerform.beer_rating) }}
+		                {% if brewform.brew_id.data == None or brewform.brew_id.data == "" %}
+			                <div> 
+		                        <label for="beer_image">Image Upload</label>
+		                        <input type="file" name="beer_images[]" multiple="multiple">
+		                    </div>
+		                {% endif %}
+		            </div>
+		        </div>
+                <div id="galleria">
+                    {% for image in images_list %}
+                        <img src="{{ url_for('static', filename=image ) }}">
+                    {% endfor %}
+                </div>
+                <script>
+                    Galleria.loadTheme("{{ url_for('static', filename='js/galleria/themes/classic/galleria.classic.min.js') }}");
+                    Galleria.run('#galleria');
+                </script>
+                <div class="form-actions" id="footer">
+                    <button name-"action-save" type="submit" class="btn btn-primary" value="save" onclick="onSave()">Save Beer</button>
+                    <button name-"action-delete" type="submit" class="btn btn-primary" value="delete" onclick="onDelete()" id="delete_btn">Delete Beer</button>
+                </div>
+            </form>
+
+        </div>
+        <script type="text/javascript">
+            window.onload = function(){
+                console.log("on brew.html load");
+                if( document.getElementById("brew_id").value == "" || document.getElementById("brew_id").value.length < 0){
+                    document.getElementById("delete_btn").style.visibility="hidden";
+                }
+                var brewId = document.getElementById("brew_id");
+                brewId.name="brew-brew_id";
+                var beerId = document.getElementById("beer_id");
+                beerId.name="beer-beer_id";
+            }
+            function onSave(){
+                console.log("onSave :: ");
+                var f = document.forms[0];
+                
+                if( f.beer_brewery ){
+                    {{ beerform.beer_brewery.data }} = f.beer_brewery.options[f.beer_brewery.selectedIndex].value;
+                }
+                if( f.beer_style ){
+                    f.beer_style.data = f.beer_style.options[f.beer_style.selectedIndex].value;
+                }
+            }
+            function onDelete(){
+                console.log("onDelete :: " + document.forms[0].brew_id.value);
+                if( document.forms[0].brew_id != null){
+                    document.forms[0].action = "/deletebrew/" + document.forms[0].brew_id.value;
+                    document.forms[0].submit();
+                }
+            }
+        </script>
+    </div>
+
+{%endblock%}
+

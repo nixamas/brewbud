@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{%block title%}Beers{%endblock%}
+
+{%block main_content%}
+
+    <div style="float:left"><h1>Breweries</h1></div>
+    <div style="float:right"><button onclick="addNewBrewery();">Add New Brewery</button></div>
+    <script type="text/javascript">
+        function addNewBrewery(){
+            console.log("addNewBrewery");
+            window.location.pathname = "/newbrewery"
+        }
+    </script>
+    <div class="row">
+        <div class="span12">
+	        <table class="table">
+	            <tbody>
+	               <tr>
+                        <th>Name</th>
+                    </tr>
+	                {% for form in breweries %}
+	                    <tr>
+	                        <td><a href="../brewery/{{ form.brewery_id }}">{{ form.brewery_name }}</a></td>
+	                    </tr>
+	                {% endfor %}
+	                </tbody>
+	        </table>
+        </div>
+    </div>
+
+{%endblock%}
